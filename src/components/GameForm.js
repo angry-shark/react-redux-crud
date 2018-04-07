@@ -6,8 +6,9 @@ import { Redirect } from 'react-router-dom';
 
 class GameForm extends Component {
   state = {
-    title: '',
-    cover: '',
+    _id: this.props.game ? this.props.game._id : null,
+    title: this.props.game ? this.props.game.title : '',
+    cover: this.props.game ? this.props.game.cover : '',
     errors: {},
     loading: false,
     done: false
@@ -18,6 +19,14 @@ class GameForm extends Component {
     if (match.params._id) {
       this.props.fetchGame(match.params._id);
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      _id: nextProps.game._id,
+      title: nextProps.game.title,
+      cover: nextProps.game.cover
+    })
   }
 
   handleChange = (e) => {
@@ -101,4 +110,15 @@ class GameForm extends Component {
   }
 }
 
-export default connect(null, { saveGame, fetchGame })(GameForm);
+const mapStateToProps = (state, props) => {
+  const { match } = props;
+  if (match.params._id) {
+    return {
+      game: state.games.find(item => item._id === match.params._id)
+    };
+  }
+
+  return { game: null };
+};
+
+export default connect(mapStateToProps, { saveGame, fetchGame })(GameForm);
