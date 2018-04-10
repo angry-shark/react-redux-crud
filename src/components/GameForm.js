@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { saveGame, fetchGame } from '../actions';
+import { saveGame, fetchGame, updateGame } from '../actions';
 import { Redirect } from 'react-router-dom';
 
 class GameForm extends Component {
@@ -55,12 +55,19 @@ class GameForm extends Component {
     const isValid = Object.keys(errors).length === 0
 
     if (isValid) {
-      const { title, cover } = this.state;
+      const { _id, title, cover } = this.state;
       this.setState({ loading: true });
-      this.props.saveGame({ title, cover }).then(
-        () => { this.setState({ done: true }) },
-        (err) => err.response.json().then(({ errors }) => { this.setState({ errors, loading: false }) })
-      )
+      if (_id) {
+        this.props.updateGame({ _id, title, cover }).then(
+          () => { this.setState({ done: true }) },
+          (err) => err.response.json().then(({ errors }) => { this.setState({ errors, loading: false }) })
+        )
+      } else {
+        this.props.saveGame({ title, cover }).then(
+          () => { this.setState({ done: true }) },
+          (err) => err.response.json().then(({ errors }) => { this.setState({ errors, loading: false }) })
+        )
+      }
     }
   }
 
@@ -121,4 +128,4 @@ const mapStateToProps = (state, props) => {
   return { game: null };
 };
 
-export default connect(mapStateToProps, { saveGame, fetchGame })(GameForm);
+export default connect(mapStateToProps, { saveGame, fetchGame, updateGame })(GameForm);
