@@ -1,9 +1,11 @@
-import { SET_GAMES, ADD_GAME, GAME_FETCHED, GAME_UPDATED } from '../constants';
+import { SET_GAMES, ADD_GAME, GAME_FETCHED, GAME_UPDATED, GAME_DELETED } from '../constants';
 
 const games = (state = [], action = {}) => {
   switch(action.type) {
     case SET_GAMES:
       return action.games;
+    case GAME_DELETED:
+      return state.filter(item => item._id !== action.gameId)
     case ADD_GAME:
       return [
         ...state,
