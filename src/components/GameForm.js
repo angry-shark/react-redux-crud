@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { saveGame, fetchGame, updateGame } from '../actions';
-import { Redirect } from 'react-router-dom';
 
 class GameForm extends Component {
   state = {
@@ -10,15 +7,7 @@ class GameForm extends Component {
     title: this.props.game ? this.props.game.title : '',
     cover: this.props.game ? this.props.game.cover : '',
     errors: {},
-    loading: false,
-    done: false
-  }
-
-  componentDidMount() {
-    const { match } = this.props;
-    if (match.params._id) {
-      this.props.fetchGame(match.params._id);
-    }
+    loading: false
   }
 
   componentWillReceiveProps(nextProps) {
@@ -57,17 +46,8 @@ class GameForm extends Component {
     if (isValid) {
       const { _id, title, cover } = this.state;
       this.setState({ loading: true });
-      if (_id) {
-        this.props.updateGame({ _id, title, cover }).then(
-          () => { this.setState({ done: true }) },
-          (err) => err.response.json().then(({ errors }) => { this.setState({ errors, loading: false }) })
-        )
-      } else {
-        this.props.saveGame({ title, cover }).then(
-          () => { this.setState({ done: true }) },
-          (err) => err.response.json().then(({ errors }) => { this.setState({ errors, loading: false }) })
-        )
-      }
+      this.props.saveGame({ _id, title, cover })
+        .catch((err) => err.response.json().then(({ errors }) => { this.setState({ errors, loading: false }) }))
     }
   }
 
@@ -111,21 +91,10 @@ class GameForm extends Component {
     )
     return (
       <div>
-        { this.state.done ? <Redirect to="/games" /> : form }
+        { form }
       </div>
     );
   }
 }
 
-const mapStateToProps = (state, props) => {
-  const { match } = props;
-  if (match.params._id) {
-    return {
-      game: state.games.find(item => item._id === match.params._id)
-    };
-  }
-
-  return { game: null };
-};
-
-export default connect(mapStateToProps, { saveGame, fetchGame, updateGame })(GameForm);
+export default GameForm;
