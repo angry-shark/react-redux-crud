@@ -14,6 +14,12 @@ $ npm install
 $ npm run start
 ```
 
+注意，有时候 npm install 的时候，可能因为版本会报错之类的问题。
+
+解决方法：
+
+可能先把 yarn.lock （lock 文件）删除掉，再把 node_modules 目录删除掉，再进行 npm install 或 yarn install
+
 ### 联系我们
 
 qq群：697272886
